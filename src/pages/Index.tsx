@@ -8,14 +8,42 @@ import hero2 from "@/assets/hero-character-2.jpg";
 import hero3 from "@/assets/hero-character-3.jpg";
 
 const bloxFruitProducts = [
-  { title: "Max Leopard + Dragon + Venom Account", image: hero1, price: "1,200,000₫", level: "2550", items: "45", tag: "HOT" },
-  { title: "Buddha Awakened + All Swords Account", image: hero3, price: "850,000₫", level: "2400", items: "32", tag: "SALE" },
-  { title: "Dough V2 + CDK + Full Accessory", image: hero2, price: "2,100,000₫", level: "2550", items: "58", tag: "PREMIUM" },
+  {
+    title: "Max Leopard + Dragon + Venom Account",
+    image: hero1,
+    price: "1,200,000₫",
+    level: "2550",
+    items: "45",
+    tag: "HOT",
+  },
+  {
+    title: "Buddha Awakened + All Swords Account",
+    image: hero3,
+    price: "850,000₫",
+    level: "2400",
+    items: "32",
+    tag: "SALE",
+  },
+  {
+    title: "Dough V2 + CDK + Full Accessory",
+    image: hero2,
+    price: "2,100,000₫",
+    level: "2550",
+    items: "58",
+    tag: "PREMIUM",
+  },
   { title: "Starter Pack — T-Rex + Portal", image: hero1, price: "450,000₫", level: "1800", items: "18" },
 ];
 
 const petSimProducts = [
-  { title: "Huge Crowned Corgi Collection", image: hero2, price: "3,500,000₫", level: "MAX", items: "120", tag: "RARE" },
+  {
+    title: "Huge Crowned Corgi Collection",
+    image: hero2,
+    price: "3,500,000₫",
+    level: "MAX",
+    items: "120",
+    tag: "RARE",
+  },
   { title: "Dark Matter Galaxy Fox Set", image: hero3, price: "1,800,000₫", level: "MAX", items: "85" },
   { title: "Rainbow Exclusive Pet Bundle", image: hero1, price: "2,200,000₫", level: "MAX", items: "95", tag: "NEW" },
   { title: "Gem Farming Bot Account", image: hero2, price: "600,000₫", level: "MAX", items: "40" },
@@ -59,7 +87,9 @@ const Index = () => {
           <section className="animate-fade-in" style={{ animationDelay: "0.2s" }}>
             <SectionHeader title="Top Tier Blox Fruit Accounts" subtitle="Premium verified accounts" icon={Sword} />
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-              {bloxFruitProducts.map((p, i) => <ProductCard key={i} {...p} />)}
+              {bloxFruitProducts.map((p, i) => (
+                <ProductCard key={i} {...p} />
+              ))}
             </div>
           </section>
 
@@ -67,7 +97,9 @@ const Index = () => {
           <section className="animate-fade-in" style={{ animationDelay: "0.3s" }}>
             <SectionHeader title="Pet Sim Services" subtitle="Exclusive pet collections" icon={PawPrint} />
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-              {petSimProducts.map((p, i) => <ProductCard key={i} {...p} />)}
+              {petSimProducts.map((p, i) => (
+                <ProductCard key={i} {...p} />
+              ))}
             </div>
           </section>
 
@@ -75,7 +107,9 @@ const Index = () => {
           <section className="animate-fade-in" style={{ animationDelay: "0.4s" }}>
             <SectionHeader title="Instant Robux" subtitle="Delivered in minutes" icon={Coins} />
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-              {robuxDeals.map((p, i) => <ProductCard key={i} {...p} />)}
+              {robuxDeals.map((p, i) => (
+                <ProductCard key={i} {...p} />
+              ))}
             </div>
           </section>
         </div>
