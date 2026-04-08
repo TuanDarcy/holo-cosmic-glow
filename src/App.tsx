@@ -3,13 +3,17 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import Index from "./pages/Index.tsx";
-import Deposit from "./pages/Deposit.tsx";
-import Dashboard from "./pages/Dashboard.tsx";
-import Checkout from "./pages/Checkout.tsx";
-import AdminLayout from "./components/admin/AdminLayout.tsx";
-import TestPage from "./pages/TestPage.tsx";
-import NotFound from "./pages/NotFound.tsx";
+import Index from "./pages/Index";
+import Deposit from "./pages/Deposit";
+import Dashboard from "./pages/Dashboard";
+import Checkout from "./pages/Checkout";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import OrderHistory from "./pages/OrderHistory";
+import Profile from "./pages/Profile";
+import AdminLayout from "./components/admin/AdminLayout";
+import TestPage from "./pages/TestPage";
+import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
@@ -20,12 +24,16 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/test" element={<TestPage />} />
           <Route path="/" element={<Index />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
           <Route path="/deposit" element={<Deposit />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/orders" element={<OrderHistory />} />
+          <Route path="/profile" element={<Profile />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/admin" element={<AdminLayout />} />
+          <Route path="/test" element={<TestPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
