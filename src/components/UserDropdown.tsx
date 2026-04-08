@@ -1,4 +1,4 @@
-import { User, ShoppingBag, Settings, LogOut, LayoutDashboard, ChevronDown } from "lucide-react";
+import { User, Key, LogOut, ChevronDown } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 
@@ -15,10 +15,8 @@ const UserDropdown = () => {
   }, []);
 
   const menuItems = [
-    { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
-    { icon: User, label: "Hồ sơ", path: "/profile" },
-    { icon: ShoppingBag, label: "Lịch sử đơn hàng", path: "/orders" },
-    { icon: Settings, label: "Cài đặt", path: "/profile" },
+    { icon: User, label: "Thông tin chung", path: "/profile" },
+    { icon: Key, label: "Đổi mật khẩu", path: "/profile?tab=security" },
   ];
 
   return (
