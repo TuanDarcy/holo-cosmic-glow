@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import { ObjectId } from "mongodb";
 
 const prisma = new PrismaClient();
 
@@ -78,7 +79,7 @@ async function main() {
   // Create some sample transactions
   await prisma.transaction.create({
     data: {
-      userId: member1.id,
+      userId: admin.id,
       amount: 50000,
       type: "DEPOSIT",
       status: "SUCCESS",

@@ -2,8 +2,8 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 datasource db {
-  provider = "mongodb"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 generator client {
@@ -12,7 +12,7 @@ generator client {
 
 // User Model - Login & Auth
 model User {
-  id        String   @id @default(cuid()) @map("_id")
+  id        String   @id @default(cuid())
   username  String   @unique
   password  String
   role      String   @default("MEMBER") // ADMIN, MEMBER, CTV
@@ -29,8 +29,8 @@ model User {
 
 // Account Model - Tài khoản shop
 model Account {
-  id        String   @id @default(cuid()) @map("_id")
-  userId    String   @db.ObjectId
+  id        String   @id @default(cuid())
+  userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   accountName String
   accountEmail String?
@@ -45,7 +45,7 @@ model Account {
 
 // Category Model - Danh mục
 model Category {
-  id        String   @id @default(cuid()) @map("_id")
+  id        String   @id @default(cuid())
   name      String   @unique
   description String?
   active    Boolean  @default(true)
@@ -55,8 +55,8 @@ model Category {
 
 // Transaction Model - Giao dịch nạp tiền
 model Transaction {
-  id        String   @id @default(cuid()) @map("_id")
-  userId    String   @db.ObjectId
+  id        String   @id @default(cuid())
+  userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   amount    Float
   type      String   // DEPOSIT, WITHDRAW, TRANSFER, PAYMENT
@@ -71,8 +71,8 @@ model Transaction {
 
 // Balance History - Lịch sử thay đổi số dư
 model BalanceHistory {
-  id        String   @id @default(cuid()) @map("_id")
-  userId    String   @db.ObjectId
+  id        String   @id @default(cuid())
+  userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   previousBalance Float
   newBalance Float
@@ -86,8 +86,8 @@ model BalanceHistory {
 
 // Order Model - Đơn hàng
 model Order {
-  id        String   @id @default(cuid()) @map("_id")
-  userId    String   @db.ObjectId
+  id        String   @id @default(cuid())
+  userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   totalAmount Float
   status    String   @default("PENDING") // PENDING, PROCESSING, COMPLETED, CANCELLED, FAILED
@@ -103,8 +103,8 @@ model Order {
 
 // Order Item Model
 model OrderItem {
-  id        String   @id @default(cuid()) @map("_id")
-  orderId   String   @db.ObjectId
+  id        String   @id @default(cuid())
+  orderId   String
   order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
   productName String
   quantity  Int
@@ -116,7 +116,7 @@ model OrderItem {
 
 // Report Model - Báo cáo doanh thu
 model Report {
-  id        String   @id @default(cuid()) @map("_id")
+  id        String   @id @default(cuid())
   date      DateTime
   totalRevenue Float @default(0)
   totalOrders Int @default(0)
@@ -131,7 +131,7 @@ model Report {
 
 // Payment Config Model - Cấu hình phương thức thanh toán
 model PaymentMethod {
-  id        String   @id @default(cuid()) @map("_id")
+  id        String   @id @default(cuid())
   name      String   @unique
   type      String // BANK_QR, SCRATCH_CARD, CRYPTO, etc
   active    Boolean  @default(true)
