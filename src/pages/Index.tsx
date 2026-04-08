@@ -64,12 +64,11 @@ const Index = () => {
           </section>
 
           {/* Main content with leaderboard sidebar */}
-          <div className="grid lg:grid-cols-[1fr_320px] gap-8">
-            <div className="space-y-12">
+          <div className="space-y-12">
               {/* Blox Fruit */}
               <section className="animate-fade-in" style={{ animationDelay: "0.2s" }}>
                 <SectionHeader title="Top Tier Blox Fruit" subtitle="Premium verified accounts" icon={Sword} />
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                   {bloxFruitProducts.slice(0, 4).map((p, i) => (
                     <ProductCard key={i} {...p} />
                   ))}
@@ -79,7 +78,7 @@ const Index = () => {
               {/* Pet Sim */}
               <section className="animate-fade-in" style={{ animationDelay: "0.3s" }}>
                 <SectionHeader title="Pet Sim Services" subtitle="Exclusive pet collections" icon={PawPrint} />
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                   {petSimProducts.slice(0, 4).map((p, i) => (
                     <ProductCard key={i} {...p} />
                   ))}
@@ -89,26 +88,13 @@ const Index = () => {
               {/* Robux */}
               <section className="animate-fade-in" style={{ animationDelay: "0.4s" }}>
                 <SectionHeader title="Instant Robux" subtitle="Delivered in minutes" icon={Coins} />
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                   {robuxDeals.slice(0, 4).map((p, i) => (
                     <ProductCard key={i} {...p} />
                   ))}
                 </div>
               </section>
-            </div>
-
-            {/* Leaderboard sidebar */}
-            <aside className="hidden lg:block">
-              <div className="sticky top-32">
-                <Leaderboard />
-              </div>
-            </aside>
           </div>
-
-          {/* Mobile leaderboard */}
-          <section className="lg:hidden animate-fade-in">
-            <Leaderboard />
-          </section>
         </div>
       </main>
     </div>
