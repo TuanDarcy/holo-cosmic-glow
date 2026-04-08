@@ -1,32 +1,45 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
-import { ObjectId } from "mongodb";
 
 const prisma = new PrismaClient();
 
 async function main() {
-  // Clear existing data
-  await prisma.balanceHistory.deleteMany();
-  await prisma.orderItem.deleteMany();
-  await prisma.order.deleteMany();
-  await prisma.transaction.deleteMany();
-  await prisma.account.deleteMany();
-  await prisma.user.deleteMany();
-  await prisma.report.deleteMany();
-  await prisma.paymentMethod.deleteMany();
-  await prisma.category.deleteMany();
+  console.log("🚀 Seeding MongoDB Atlas...\n");
+  
+  // First, try to clear old data if it exists
+  console.log("🗑️ Attempting to clear old data...");
+  try {
+    const userCount = await prisma.user.count();
+    if (userCount > 0) {
+      console.log(`Found ${userCount} old users, clearing...`);
+      
+      // Delete in correct order to avoid foreign key issues
+      await prisma.balanceHistory.deleteMany({});
+      await prisma.orderItem.deleteMany({});
+      await prisma.order.deleteMany({});
+      await prisma.transaction.deleteMany({});
+      await prisma.account.deleteMany({});
+      await prisma.user.deleteMany({});
+      await prisma.report.deleteMany({});
+      await prisma.paymentMethod.deleteMany({});
+      await prisma.category.deleteMany({});
+      console.log("✅ Old data cleared\n");
+    }
+  } catch (e) {
+    console.warn("⚠️ Could not clear old data (first run?):", e.message.substring(0, 50) + "\n");
+  }
 
   // Create admin user
-  const adminPassword = bcrypt.hashSync("1", 10);
   const admin = await prisma.user.create({
     data: {
       username: "admin",
-      password: adminPassword,
+      password: bcrypt.hashSync("1", 10),
       role: "ADMIN",
       balance: 1000000,
       active: true,
     },
   });
+  console.log("✅ Admin created:", admin.id);
 
   // Create member users
   const member1 = await prisma.user.create({
@@ -38,6 +51,7 @@ async function main() {
       active: true,
     },
   });
+  console.log("✅ Member1 created:", member1.id);
 
   const member2 = await prisma.user.create({
     data: {
@@ -48,6 +62,7 @@ async function main() {
       active: true,
     },
   });
+  console.log("✅ Member2 created:", member2.id);
 
   const ctv = await prisma.user.create({
     data: {
@@ -58,9 +73,10 @@ async function main() {
       active: true,
     },
   });
+  console.log("✅ CTV created:", ctv.id);
 
   // Create categories
-  const cat1 = await prisma.category.create({
+  await prisma.category.create({
     data: {
       name: "Tài khoản",
       description: "Bán tài khoản game",
@@ -68,22 +84,23 @@ async function main() {
     },
   });
 
-  const cat2 = await prisma.category.create({
+  await prisma.category.create({
     data: {
       name: "Thẻ cào",
       description: "Bán thẻ cào",
       active: true,
     },
   });
+  console.log("✅ Categories created");
 
-  // Create some sample transactions
+  // Create transactions
   await prisma.transaction.create({
     data: {
       userId: admin.id,
       amount: 50000,
       type: "DEPOSIT",
       status: "SUCCESS",
-      description: "Nạp tiền lần 1",
+      description: "Nạp tiền",
     },
   });
 
@@ -93,9 +110,10 @@ async function main() {
       amount: 100000,
       type: "DEPOSIT",
       status: "SUCCESS",
-      description: "Nạp tiền lần 1",
+      description: "Nạp tiền",
     },
   });
+  console.log("✅ Transactions created");
 
   // Create order
   const order = await prisma.order.create({
@@ -115,6 +133,7 @@ async function main() {
       },
     },
   });
+  console.log("✅ Order created");
 
   // Create balance history
   await prisma.balanceHistory.create({
@@ -126,6 +145,7 @@ async function main() {
       reason: "Mua hàng",
     },
   });
+  console.log("✅ Balance history created");
 
   // Create today's report
   const today = new Date();
@@ -141,15 +161,24 @@ async function main() {
       activeUsers: 3,
     },
   });
+  console.log("✅ Report created");
 
-  console.log("✅ Database seeded successfully!");
-  console.log("Admin:", admin);
-  console.log("Members:", member1, member2);
+  console.log("\n" + "=".repeat(50));
+  console.log("✅✅✅ MongoDB Atlas seeded successfully!");
+  console.log("=".repeat(50));
+  console.log("\n📋 Test Credentials:");
+  console.log("  Admin:   admin / 1 (Full access)");
+  console.log("  Member1: member1 / 1 (50,000)");
+  console.log("  Member2: member2 / 1 (100,000)");
+  console.log("  CTV:     ctv1 / 1 (200,000)");
+  console.log("\n🌐 Database: trackstat @ MongoDB Atlas");
+  console.log("✅ Collections: User, Account, Category, Transaction, Order, Report, etc.");
 }
 
 main()
   .catch((e) => {
-    console.error(e);
+    console.error("\n❌ Seed error:");
+    console.error(e.message);
     process.exit(1);
   })
   .finally(async () => {
