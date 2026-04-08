@@ -5,6 +5,8 @@ const navLinks = [
   { label: "Home", path: "/" },
   { label: "Deposit", path: "/deposit" },
   { label: "Dashboard", path: "/dashboard" },
+  { label: "Checkout", path: "/checkout" },
+  { label: "Admin", path: "/admin" },
 ];
 
 const Navbar = () => {
