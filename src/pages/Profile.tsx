@@ -1,31 +1,41 @@
 import Navbar from "@/components/Navbar";
-import { User, Shield, Key, Trophy, Star, Crown, Medal, Award } from "lucide-react";
+import { User, Shield, Copy, Check, Phone, Mail, Calendar, Wallet, Gamepad2, Link2 } from "lucide-react";
 import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import { Input } from "@/components/ui/input";
 
-const topContributors = [
-  { rank: 1, name: "DragonSlayer99", spent: "45,200,000₫", tier: "Diamond", icon: Crown, color: "text-yellow-400" },
-  { rank: 2, name: "BloxMaster_VN", spent: "38,100,000₫", tier: "Diamond", icon: Medal, color: "text-gray-300" },
-  { rank: 3, name: "PetLord2024", spent: "31,500,000₫", tier: "Gold", icon: Award, color: "text-amber-600" },
-  { rank: 4, name: "RobuxKing", spent: "25,800,000₫", tier: "Gold", icon: Star, color: "text-muted-foreground" },
-  { rank: 5, name: "NightFury_X", spent: "19,200,000₫", tier: "Silver", icon: Star, color: "text-muted-foreground" },
+const recentCards = [
+  { id: "TC-001", serial: "1234****5678", code: "9876****3210", value: "50,000₫", status: "Thành công", date: "08/04/2026", statusColor: "text-green-400 bg-green-400/10" },
+  { id: "TC-002", serial: "5678****1234", code: "3210****9876", value: "100,000₫", status: "Đang xử lý", date: "07/04/2026", statusColor: "text-yellow-400 bg-yellow-400/10" },
+  { id: "TC-003", serial: "9012****3456", code: "6543****2109", value: "200,000₫", status: "Thất bại", date: "06/04/2026", statusColor: "text-destructive bg-destructive/10" },
+  { id: "TC-004", serial: "3456****7890", code: "0987****6543", value: "50,000₫", status: "Thành công", date: "05/04/2026", statusColor: "text-green-400 bg-green-400/10" },
 ];
 
 const Profile = () => {
-  const [activeSection, setActiveSection] = useState<"profile" | "security" | "ranking">("profile");
+  const [searchParams] = useSearchParams();
+  const initialTab = searchParams.get("tab") === "security" ? "security" : "profile";
+  const [activeSection, setActiveSection] = useState<"profile" | "security" | "history">(initialTab as any);
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText("https://holoshop.vn/ref/HoloGamer123");
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   return (
     <div className="min-h-screen">
       <Navbar />
       <main className="pt-20 pb-12 px-4">
-        <div className="container mx-auto max-w-5xl">
-          <h1 className="font-heading font-bold text-3xl text-foreground text-glow-cyan mb-6">Profile & Ranking</h1>
+        <div className="container mx-auto max-w-4xl">
+          <h1 className="font-heading font-bold text-3xl text-foreground text-glow-cyan mb-6">Tài khoản</h1>
 
           {/* Tab Nav */}
-          <div className="flex gap-2 mb-8">
+          <div className="flex gap-2 mb-8 flex-wrap">
             {[
-              { id: "profile" as const, label: "Profile", icon: User },
-              { id: "security" as const, label: "Security", icon: Shield },
-              { id: "ranking" as const, label: "Leaderboard", icon: Trophy },
+              { id: "profile" as const, label: "Thông tin chung", icon: User },
+              { id: "security" as const, label: "Đổi mật khẩu", icon: Shield },
+              { id: "history" as const, label: "Lịch sử nạp thẻ", icon: Wallet },
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -44,106 +54,160 @@ const Profile = () => {
 
           {/* Profile Section */}
           {activeSection === "profile" && (
-            <div className="glass-panel iridescent-border rounded-2xl p-8">
+            <div className="glass-panel iridescent-border rounded-2xl p-6 sm:p-8">
+              {/* Avatar & name */}
               <div className="flex flex-col sm:flex-row items-start gap-6 mb-8">
                 <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center glow-cyan shrink-0">
-                  <span className="font-heading font-black text-2xl text-primary-foreground">VN</span>
+                  <span className="font-heading font-black text-2xl text-primary-foreground">🎮</span>
                 </div>
+                <div className="flex-1">
+                  <h2 className="font-heading font-bold text-xl text-foreground">HoloGamer</h2>
+                  <p className="text-sm text-muted-foreground">user@holoshop.vn</p>
+                </div>
+              </div>
+
+              {/* Balances */}
+              <div className="grid grid-cols-2 gap-4 mb-8">
+                <div className="glass-panel p-4 rounded-xl text-center">
+                  <Wallet className="w-5 h-5 text-primary mx-auto mb-2" />
+                  <p className="text-xs text-muted-foreground mb-1">Số dư VND</p>
+                  <p className="font-heading font-bold text-lg text-foreground text-glow-cyan">1,250,000₫</p>
+                </div>
+                <div className="glass-panel p-4 rounded-xl text-center">
+                  <Gamepad2 className="w-5 h-5 text-secondary mx-auto mb-2" />
+                  <p className="text-xs text-muted-foreground mb-1">Số dư Robux</p>
+                  <p className="font-heading font-bold text-lg text-foreground text-glow-violet">3,200 R$</p>
+                </div>
+              </div>
+
+              {/* Info grid */}
+              <div className="space-y-5">
+                {/* Email */}
                 <div>
-                  <h2 className="font-heading font-bold text-xl text-foreground">Guest User</h2>
-                  <p className="text-sm text-muted-foreground">guest@holoshop.vn</p>
-                  <div className="flex items-center gap-2 mt-2">
-                    <span className="px-3 py-0.5 rounded-full text-[10px] font-bold bg-primary/15 text-primary border border-primary/20">BRONZE</span>
-                    <span className="text-xs text-muted-foreground">0 Loyalty Points</span>
+                  <label className="flex items-center gap-2 text-xs text-muted-foreground mb-1.5">
+                    <Mail className="w-3.5 h-3.5" /> Email
+                  </label>
+                  <div className="flex gap-2">
+                    <div className="flex-1 px-4 py-3 rounded-xl bg-muted/20 border border-glass-border text-sm text-foreground">
+                      user@holoshop.vn
+                    </div>
+                    <button className="px-4 py-2 rounded-xl bg-primary/15 text-primary text-sm font-medium border border-primary/20 hover:bg-primary/25 transition-colors">
+                      Update
+                    </button>
+                  </div>
+                </div>
+
+                {/* Phone */}
+                <div>
+                  <label className="flex items-center gap-2 text-xs text-muted-foreground mb-1.5">
+                    <Phone className="w-3.5 h-3.5" /> Số điện thoại
+                  </label>
+                  <div className="flex gap-2">
+                    <div className="flex-1 px-4 py-3 rounded-xl bg-muted/20 border border-glass-border text-sm text-muted-foreground italic">
+                      Chưa cập nhật
+                    </div>
+                    <button className="px-4 py-2 rounded-xl bg-primary/15 text-primary text-sm font-medium border border-primary/20 hover:bg-primary/25 transition-colors">
+                      Update
+                    </button>
+                  </div>
+                </div>
+
+                {/* Referral Link */}
+                <div>
+                  <label className="flex items-center gap-2 text-xs text-muted-foreground mb-1.5">
+                    <Link2 className="w-3.5 h-3.5" /> Referrer Link
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      readOnly
+                      value="https://holoshop.vn/ref/HoloGamer123"
+                      className="flex-1 px-4 py-3 rounded-xl bg-muted/20 border border-glass-border text-sm text-foreground cursor-default focus:outline-none"
+                    />
+                    <button
+                      onClick={handleCopy}
+                      className="px-4 py-2 rounded-xl bg-primary/15 text-primary text-sm font-medium border border-primary/20 hover:bg-primary/25 transition-colors flex items-center gap-1.5"
+                    >
+                      {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                      {copied ? "Copied" : "Copy"}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Join Date */}
+                <div>
+                  <label className="flex items-center gap-2 text-xs text-muted-foreground mb-1.5">
+                    <Calendar className="w-3.5 h-3.5" /> Ngày tham gia
+                  </label>
+                  <div className="px-4 py-3 rounded-xl bg-muted/20 border border-glass-border text-sm text-foreground">
+                    01/01/2024
                   </div>
                 </div>
               </div>
 
-              <div className="grid sm:grid-cols-2 gap-5">
-                {[
-                  { label: "Display Name", value: "Guest User" },
-                  { label: "Email", value: "guest@holoshop.vn" },
-                  { label: "Member Since", value: "January 2024" },
-                  { label: "Total Orders", value: "12" },
-                ].map((field) => (
-                  <div key={field.label}>
-                    <label className="text-xs text-muted-foreground mb-1.5 block">{field.label}</label>
-                    <div className="px-4 py-3 rounded-xl bg-muted/20 border border-glass-border text-sm text-foreground">
-                      {field.value}
-                    </div>
-                  </div>
-                ))}
-              </div>
+              {/* Logout */}
+              <button className="mt-8 w-full py-3 rounded-xl bg-destructive/15 border border-destructive/20 text-destructive font-heading font-semibold text-sm hover:bg-destructive/25 transition-colors">
+                Đăng xuất
+              </button>
             </div>
           )}
 
           {/* Security Section */}
           {activeSection === "security" && (
-            <div className="space-y-4">
-              {[
-                { title: "Change Password", desc: "Update your account password", icon: Key, action: "Update" },
-                { title: "Two-Factor Authentication", desc: "Add an extra layer of security", icon: Shield, action: "Enable" },
-              ].map((item) => (
-                <div key={item.title} className="glass-panel iridescent-border rounded-2xl p-6 flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="p-3 rounded-xl bg-primary/10">
-                      <item.icon className="w-5 h-5 text-primary" />
-                    </div>
-                    <div>
-                      <h3 className="font-heading font-semibold text-foreground">{item.title}</h3>
-                      <p className="text-xs text-muted-foreground mt-0.5">{item.desc}</p>
-                    </div>
-                  </div>
-                  <button className="px-5 py-2 rounded-xl bg-muted/30 border border-glass-border text-sm font-medium text-foreground hover:bg-muted/50 hover:border-primary/30 transition-all">
-                    {item.action}
-                  </button>
+            <div className="glass-panel iridescent-border rounded-2xl p-6 sm:p-8">
+              <h2 className="font-heading font-bold text-xl text-foreground mb-6">Đổi mật khẩu</h2>
+              <div className="space-y-5 max-w-md">
+                <div>
+                  <label className="block text-xs text-muted-foreground mb-1.5">Mật khẩu cũ</label>
+                  <Input type="password" placeholder="Nhập mật khẩu cũ" className="glass-panel bg-transparent border-glass-border focus:border-primary/40" />
                 </div>
-              ))}
+                <div>
+                  <label className="block text-xs text-muted-foreground mb-1.5">Mật khẩu mới</label>
+                  <Input type="password" placeholder="Nhập mật khẩu mới" className="glass-panel bg-transparent border-glass-border focus:border-primary/40" />
+                </div>
+                <div>
+                  <label className="block text-xs text-muted-foreground mb-1.5">Xác nhận mật khẩu mới</label>
+                  <Input type="password" placeholder="Nhập lại mật khẩu mới" className="glass-panel bg-transparent border-glass-border focus:border-primary/40" />
+                </div>
+                <button className="w-full btn-glow py-3 rounded-xl bg-gradient-to-r from-primary to-secondary font-heading font-bold text-primary-foreground hover:scale-[1.02] transition-transform">
+                  Cập nhật mật khẩu
+                </button>
+              </div>
             </div>
           )}
 
-          {/* Ranking Section */}
-          {activeSection === "ranking" && (
-            <div className="glass-panel iridescent-border rounded-2xl p-8">
-              <h2 className="font-heading font-bold text-xl text-foreground mb-6 flex items-center gap-3">
-                <Trophy className="w-6 h-6 text-yellow-400" />
-                Top Contributors
-              </h2>
-              <div className="space-y-3">
-                {topContributors.map((c) => {
-                  const maxSpent = 45200000;
-                  const currentSpent = parseInt(c.spent.replace(/[₫,]/g, ""));
-                  const pct = (currentSpent / maxSpent) * 100;
-
-                  return (
-                    <div key={c.rank} className="flex items-center gap-4 p-4 rounded-xl bg-muted/10 hover:bg-muted/20 transition-all group">
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center font-heading font-bold text-sm ${
-                        c.rank === 1 ? "bg-yellow-500/20 text-yellow-400" :
-                        c.rank === 2 ? "bg-gray-400/20 text-gray-300" :
-                        c.rank === 3 ? "bg-amber-600/20 text-amber-500" :
-                        "bg-muted/30 text-muted-foreground"
-                      }`}>
-                        {c.rank}
-                      </div>
-                      <c.icon className={`w-5 h-5 ${c.color}`} />
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between mb-1.5">
-                          <span className="font-medium text-sm text-foreground">{c.name}</span>
-                          <div className="flex items-center gap-3">
-                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-secondary/15 text-secondary border border-secondary/20">{c.tier}</span>
-                            <span className="text-xs font-heading font-semibold text-primary">{c.spent}</span>
-                          </div>
-                        </div>
-                        <div className="liquid-progress h-2">
-                          <div
-                            className="liquid-progress-bar"
-                            style={{ width: `${pct}%`, transition: "width 1s ease" }}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
+          {/* Card History Section */}
+          {activeSection === "history" && (
+            <div className="glass-panel iridescent-border rounded-2xl p-6 sm:p-8">
+              <h2 className="font-heading font-bold text-xl text-foreground mb-6">Thẻ Nạp Gần Nhất</h2>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-glass-border">
+                      <th className="text-left text-xs text-muted-foreground font-medium py-3 px-2">ID</th>
+                      <th className="text-left text-xs text-muted-foreground font-medium py-3 px-2">Serial</th>
+                      <th className="text-left text-xs text-muted-foreground font-medium py-3 px-2">Mã thẻ</th>
+                      <th className="text-left text-xs text-muted-foreground font-medium py-3 px-2">Mệnh giá</th>
+                      <th className="text-left text-xs text-muted-foreground font-medium py-3 px-2">Trạng thái</th>
+                      <th className="text-left text-xs text-muted-foreground font-medium py-3 px-2">Ngày</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {recentCards.map((card) => (
+                      <tr key={card.id} className="border-b border-glass-border/50 hover:bg-muted/10 transition-colors">
+                        <td className="py-3 px-2 font-mono text-xs text-muted-foreground">{card.id}</td>
+                        <td className="py-3 px-2 font-mono text-xs">{card.serial}</td>
+                        <td className="py-3 px-2 font-mono text-xs">{card.code}</td>
+                        <td className="py-3 px-2 font-heading font-semibold text-foreground">{card.value}</td>
+                        <td className="py-3 px-2">
+                          <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${card.statusColor}`}>
+                            {card.status}
+                          </span>
+                        </td>
+                        <td className="py-3 px-2 text-xs text-muted-foreground">{card.date}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </div>
           )}
