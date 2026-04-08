@@ -1,0 +1,141 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// User Model - Login & Auth
+model User {
+  id        String   @id @default(cuid()) @map("_id")
+  username  String   @unique
+  password  String
+  role      String   @default("MEMBER") // ADMIN, MEMBER, CTV
+  balance   Float    @default(0)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  accounts      Account[]
+  transactions  Transaction[]
+  orders        Order[]
+  balanceHistories BalanceHistory[]
+}
+
+// Account Model - Tài khoản shop
+model Account {
+  id        String   @id @default(cuid()) @map("_id")
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accountName String
+  accountEmail String?
+  accountPhone String?
+  category  String?
+  status    String   @default("active")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+}
+
+// Category Model - Danh mục
+model Category {
+  id        String   @id @default(cuid()) @map("_id")
+  name      String   @unique
+  description String?
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Transaction Model - Giao dịch nạp tiền
+model Transaction {
+  id        String   @id @default(cuid()) @map("_id")
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  amount    Float
+  type      String   // DEPOSIT, WITHDRAW, TRANSFER, PAYMENT
+  description String?
+  status    String   @default("PENDING") // PENDING, SUCCESS, FAILED, CANCELLED
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+// Balance History - Lịch sử thay đổi số dư
+model BalanceHistory {
+  id        String   @id @default(cuid()) @map("_id")
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  previousBalance Float
+  newBalance Float
+  change    Float
+  reason    String
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+// Order Model - Đơn hàng
+model Order {
+  id        String   @id @default(cuid()) @map("_id")
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  totalAmount Float
+  status    String   @default("PENDING") // PENDING, PROCESSING, COMPLETED, CANCELLED, FAILED
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  items     OrderItem[]
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+// Order Item Model
+model OrderItem {
+  id        String   @id @default(cuid()) @map("_id")
+  orderId   String   @db.ObjectId
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productName String
+  quantity  Int
+  price     Float
+  total     Float
+
+  @@index([orderId])
+}
+
+// Report Model - Báo cáo doanh thu
+model Report {
+  id        String   @id @default(cuid()) @map("_id")
+  date      DateTime
+  totalRevenue Float @default(0)
+  totalOrders Int @default(0)
+  totalDeposits Float @default(0)
+  totalWithdrawals Float @default(0)
+  activeUsers Int @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([date])
+}
+
+// Payment Config Model - Cấu hình phương thức thanh toán
+model PaymentMethod {
+  id        String   @id @default(cuid()) @map("_id")
+  name      String   @unique
+  type      String // BANK_QR, SCRATCH_CARD, CRYPTO, etc
+  active    Boolean  @default(true)
+  config    String?  // JSON config
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
