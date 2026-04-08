@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { ChevronLeft, ChevronRight, Star, Zap } from "lucide-react";
+import { useState, useEffect } from "react";
+import { ChevronLeft, ChevronRight, Star, Zap, Search } from "lucide-react";
 import hero1 from "@/assets/hero-character-1.jpg";
 import hero2 from "@/assets/hero-character-2.jpg";
 import hero3 from "@/assets/hero-character-3.jpg";
@@ -38,6 +38,14 @@ const HeroSlider = () => {
   const [current, setCurrent] = useState(0);
   const slide = slides[current];
 
+  // Auto-slide
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrent((c) => (c + 1) % slides.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
+
   const next = () => setCurrent((c) => (c + 1) % slides.length);
   const prev = () => setCurrent((c) => (c - 1 + slides.length) % slides.length);
 
@@ -55,7 +63,19 @@ const HeroSlider = () => {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 flex items-center h-full min-h-[400px] md:min-h-[480px] px-8 md:px-12">
+      <div className="relative z-10 flex flex-col justify-center h-full min-h-[400px] md:min-h-[480px] px-8 md:px-12">
+        {/* Search Bar - moved here */}
+        <div className="mb-6 max-w-lg">
+          <div className="relative group">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+            <input
+              type="text"
+              placeholder="Tìm kiếm tài khoản, vật phẩm..."
+              className="w-full pl-11 pr-4 py-3 rounded-xl bg-background/40 backdrop-blur-md border border-glass-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/40 focus:bg-background/60 transition-all"
+            />
+          </div>
+        </div>
+
         <div className="max-w-lg">
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-primary/20 text-primary border border-primary/30 mb-4 animate-pulse-glow">
             <Zap className="w-3 h-3" />
@@ -72,7 +92,7 @@ const HeroSlider = () => {
           </p>
           <div className="flex items-center gap-4">
             <button className="btn-glow px-8 py-3 rounded-xl bg-gradient-to-r from-primary to-secondary font-heading font-bold text-primary-foreground hover:scale-105 transition-transform">
-              Buy Now — {slide.price}
+              Mua Ngay — {slide.price}
             </button>
             <div className="flex items-center gap-1 text-primary">
               {[...Array(5)].map((_, i) => (

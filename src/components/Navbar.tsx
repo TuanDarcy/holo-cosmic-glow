@@ -1,13 +1,12 @@
-import { Search, Wallet, Bell, ChevronDown, Menu, X } from "lucide-react";
+import { Wallet, Menu, X } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
+import NotificationDropdown from "./NotificationDropdown";
+import UserDropdown from "./UserDropdown";
 
 const navLinks = [
-  { label: "Home", path: "/" },
-  { label: "Deposit", path: "/deposit" },
-  { label: "Dashboard", path: "/dashboard" },
-  { label: "Orders", path: "/orders" },
-  { label: "Profile", path: "/profile" },
+  { label: "Trang chủ", path: "/" },
+  { label: "Nạp tiền", path: "/deposit" },
   { label: "Admin", path: "/admin" },
 ];
 
@@ -47,18 +46,6 @@ const Navbar = () => {
             ))}
           </div>
 
-          {/* Search */}
-          <div className="hidden lg:flex items-center flex-1 max-w-sm mx-6">
-            <div className="relative w-full group">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-              <input
-                type="text"
-                placeholder="Search accounts, items..."
-                className="w-full pl-10 pr-4 py-2 rounded-xl bg-muted/50 border border-glass-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/40 focus:bg-muted/70 transition-all"
-              />
-            </div>
-          </div>
-
           {/* Right section */}
           <div className="flex items-center gap-3">
             <Link to="/deposit" className="glass-panel px-4 py-1.5 rounded-full flex items-center gap-2 hover:border-primary/30 transition-colors">
@@ -66,17 +53,8 @@ const Navbar = () => {
               <span className="text-sm font-semibold text-foreground">1,250,000₫</span>
             </Link>
 
-            <button className="relative p-2 rounded-xl hover:bg-muted/50 transition-colors">
-              <Bell className="w-5 h-5 text-muted-foreground" />
-              <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-primary animate-pulse-glow" />
-            </button>
-
-            <Link to="/profile" className="flex items-center gap-2 p-1 rounded-xl hover:bg-muted/50 transition-colors">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
-                <span className="text-xs font-bold text-primary-foreground">VN</span>
-              </div>
-              <ChevronDown className="w-3 h-3 text-muted-foreground hidden sm:block" />
-            </Link>
+            <NotificationDropdown />
+            <UserDropdown />
 
             {/* Mobile menu toggle */}
             <button className="md:hidden p-2 rounded-xl hover:bg-muted/50 transition-colors" onClick={() => setMobileOpen(!mobileOpen)}>
@@ -107,7 +85,7 @@ const Navbar = () => {
             ))}
             <div className="pt-3 border-t border-border mt-3">
               <Link to="/login" onClick={() => setMobileOpen(false)} className="block px-4 py-3 rounded-xl text-sm font-medium text-primary hover:bg-primary/10 transition-all">
-                Sign In
+                Đăng nhập
               </Link>
             </div>
           </div>
