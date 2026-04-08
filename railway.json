@@ -1,0 +1,6 @@
+{
+  "startCommand": "tsx server/index.ts",
+  "nixpacks": {
+    "providers": ["nodejs-pnpm"]
+  }
+}
