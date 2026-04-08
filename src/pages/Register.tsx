@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { apiClient } from "@/utils/apiClient";
 import { Mail, Lock, Eye, EyeOff, User, Gamepad2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -21,17 +21,10 @@ const Register = () => {
     }
     setLoading(true);
     try {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: { display_name: displayName },
-          emailRedirectTo: window.location.origin,
-        },
-      });
-      if (error) throw error;
-      toast({ title: "Account created!", description: "Check your email to verify your account" });
-      navigate("/login");
+      const result = await apiClient.signup(email, password, displayName);
+      apiClient.setToken(result.token, result.user);
+      toast({ title: "Account created!", description: "Welcome to HoloShop!" });
+      navigate("/");
     } catch (error: any) {
       toast({ title: "Registration failed", description: error.message, variant: "destructive" });
     } finally {
@@ -40,11 +33,7 @@ const Register = () => {
   };
 
   const handleSocialLogin = async (provider: "google") => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider,
-      options: { redirectTo: window.location.origin },
-    });
-    if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
+    toast({ title: "Coming soon", description: "Social login not yet implemented", variant: "default" });
   };
 
   return (

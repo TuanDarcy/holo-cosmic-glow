@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { apiClient } from "@/utils/apiClient";
 import { Mail, Lock, Eye, EyeOff, Gamepad2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -16,8 +16,8 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) throw error;
+      const result = await apiClient.login(email, password);
+      apiClient.setToken(result.token, result.user);
       toast({ title: "Welcome back!", description: "Login successful" });
       navigate("/");
     } catch (error: any) {
@@ -28,11 +28,7 @@ const Login = () => {
   };
 
   const handleSocialLogin = async (provider: "google") => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider,
-      options: { redirectTo: window.location.origin },
-    });
-    if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
+    toast({ title: "Coming soon", description: "Social login not yet implemented", variant: "default" });
   };
 
   return (
