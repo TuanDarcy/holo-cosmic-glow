@@ -3,7 +3,7 @@ import HeroSlider from "@/components/HeroSlider";
 import ProductCard from "@/components/ProductCard";
 import SectionHeader from "@/components/SectionHeader";
 import TopRechargeMarquee from "@/components/TopRechargeMarquee";
-import Leaderboard from "@/components/Leaderboard";
+import { Sword, PawPrint, Coins, TrendingUp } from "lucide-react";
 import { Sword, PawPrint, Coins, TrendingUp } from "lucide-react";
 import hero1 from "@/assets/hero-character-1.jpg";
 import hero2 from "@/assets/hero-character-2.jpg";
