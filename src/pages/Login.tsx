@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { apiClient } from "@/utils/apiClient";
+import { useAuth } from "@/context/AuthContext";
 import { Mail, Lock, Eye, EyeOff, Gamepad2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -11,13 +11,13 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { login } = useAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const result = await apiClient.login(email, password);
-      apiClient.setToken(result.token, result.user);
+      await login(email, password);
       toast({ title: "Welcome back!", description: "Login successful" });
       navigate("/");
     } catch (error: any) {

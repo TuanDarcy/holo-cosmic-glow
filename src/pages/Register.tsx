@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { apiClient } from "@/utils/apiClient";
+import { useAuth } from "@/context/AuthContext";
 import { Mail, Lock, Eye, EyeOff, User, Gamepad2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -12,6 +12,7 @@ const Register = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { signup } = useAuth();
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,8 +22,7 @@ const Register = () => {
     }
     setLoading(true);
     try {
-      const result = await apiClient.signup(email, password, displayName);
-      apiClient.setToken(result.token, result.user);
+      await signup(email, password, displayName);
       toast({ title: "Account created!", description: "Welcome to HoloShop!" });
       navigate("/");
     } catch (error: any) {
