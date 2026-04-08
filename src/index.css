@@ -181,3 +181,58 @@
     font-family: 'Inter', sans-serif;
   }
 }
+
+/* Marquee animation */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation: marquee 25s linear infinite;
+}
+
+/* Light mode */
+.light {
+  --background: 260 30% 96%;
+  --foreground: 252 40% 15%;
+
+  --card: 260 25% 93%;
+  --card-foreground: 252 40% 15%;
+
+  --popover: 260 25% 95%;
+  --popover-foreground: 252 40% 15%;
+
+  --primary: 186 100% 38%;
+  --primary-foreground: 0 0% 100%;
+
+  --secondary: 265 60% 55%;
+  --secondary-foreground: 0 0% 100%;
+
+  --muted: 260 20% 90%;
+  --muted-foreground: 252 15% 45%;
+
+  --accent: 265 60% 55%;
+  --accent-foreground: 0 0% 100%;
+
+  --destructive: 0 84% 55%;
+  --destructive-foreground: 0 0% 100%;
+
+  --border: 260 15% 85%;
+  --input: 260 15% 85%;
+  --ring: 186 100% 38%;
+
+  --sidebar-background: 260 25% 94%;
+  --sidebar-foreground: 252 40% 20%;
+  --sidebar-primary: 186 100% 38%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 265 60% 55%;
+  --sidebar-accent-foreground: 0 0% 100%;
+  --sidebar-border: 260 15% 85%;
+  --sidebar-ring: 186 100% 38%;
+
+  --glass-bg: 260 25% 95%;
+  --glass-border: 260 15% 82%;
+  --glow-cyan: 186 100% 38%;
+  --glow-violet: 265 60% 55%;
+  --surface-elevated: 260 25% 93%;
+}

@@ -1,12 +1,14 @@
 import { ChevronRight, type LucideIcon } from "lucide-react";
+import { Link } from "react-router-dom";
 
 interface SectionHeaderProps {
   title: string;
   subtitle?: string;
   icon?: LucideIcon;
+  viewAllHref?: string;
 }
 
-const SectionHeader = ({ title, subtitle, icon: Icon }: SectionHeaderProps) => (
+const SectionHeader = ({ title, subtitle, icon: Icon, viewAllHref = "#" }: SectionHeaderProps) => (
   <div className="flex items-center justify-between mb-6">
     <div className="flex items-center gap-3">
       {Icon && (
@@ -19,9 +21,9 @@ const SectionHeader = ({ title, subtitle, icon: Icon }: SectionHeaderProps) => (
         {subtitle && <p className="text-xs text-muted-foreground mt-0.5">{subtitle}</p>}
       </div>
     </div>
-    <button className="flex items-center gap-1 text-sm text-primary hover:text-primary/80 transition-colors font-medium">
-      View All <ChevronRight className="w-4 h-4" />
-    </button>
+    <Link to={viewAllHref} className="flex items-center gap-1 text-sm text-primary hover:text-primary/80 transition-colors font-medium glass-panel px-3 py-1.5 rounded-lg">
+      Xem tất cả <ChevronRight className="w-4 h-4" />
+    </Link>
   </div>
 );
 
