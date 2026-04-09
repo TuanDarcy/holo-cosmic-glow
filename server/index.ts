@@ -11,37 +11,37 @@ const app = express();
 const prisma = new PrismaClient();
 
 // Middleware
-const allowedOrigins = [
-  "https://robuxfast.vercel.app",
-  "http://localhost:8080",
-  "http://localhost:8081",
-  "http://localhost:8082",
-  "http://localhost:8083",
-  "http://localhost:8084",
-  "http://localhost:8085",
-];
+const allowedOrigins = ["https://robuxfast.vercel.app"];
 
-app.use(
-  cors({
-    origin(origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-        return;
-      }
-      callback(new Error("CORS blocked for this origin"));
-    },
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: true,
-    preflightContinue: false,
-    maxAge: 86400,
-  }),
-);
+const corsOptions: cors.CorsOptions = {
+  origin(origin, callback) {
+    if (!origin) {
+      callback(null, true);
+      return;
+    }
 
-// Preflight handler for specific routes
-app.options("/api/auth/signup", cors());
-app.options("/api/auth/login", cors());
-app.options("/api/user/profile", cors());
+    const isAllowed =
+      allowedOrigins.includes(origin) ||
+      /^https:\/\/([a-z0-9-]+\.)*vercel\.app$/i.test(origin) ||
+      /^http:\/\/localhost:\d+$/i.test(origin);
+
+    if (isAllowed) {
+      callback(null, true);
+      return;
+    }
+
+    callback(new Error(`CORS blocked for origin: ${origin}`));
+  },
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
+  preflightContinue: false,
+  optionsSuccessStatus: 204,
+  maxAge: 86400,
+};
+
+app.use(cors(corsOptions));
+app.options(/^\/api\/.*$/, cors(corsOptions));
 
 app.use(express.json());
 
@@ -53,14 +53,19 @@ const PORT = process.env.PORT || 3000;
 // ✅ SIGNUP - Create new user
 app.post("/api/auth/signup", async (req: any, res: any) => {
   try {
-    const { username, password, displayName } = req.body;
+    const { username, email, password } = req.body;
+    const normalizedUsername = String(username || "").trim();
+    const normalizedEmail =
+      typeof email === "string" && email.trim()
+        ? email.trim().toLowerCase()
+        : null;
 
     // Validate input
-    if (!username || !password) {
+    if (!normalizedUsername || !password) {
       return res.status(400).json({ error: "Username and password required" });
     }
 
-    if (username.length < 3 || password.length < 3) {
+    if (normalizedUsername.length < 3 || password.length < 3) {
       return res
         .status(400)
         .json({ error: "Username and password must be at least 3 characters" });
@@ -68,11 +73,21 @@ app.post("/api/auth/signup", async (req: any, res: any) => {
 
     // Check if user exists
     const existingUser = await prisma.user.findUnique({
-      where: { username },
+      where: { username: normalizedUsername },
     });
 
     if (existingUser) {
       return res.status(400).json({ error: "Username already exists" });
+    }
+
+    if (normalizedEmail) {
+      const existingEmail = await prisma.user.findFirst({
+        where: { email: normalizedEmail },
+      });
+
+      if (existingEmail) {
+        return res.status(400).json({ error: "Email already exists" });
+      }
     }
 
     // Hash password
@@ -81,7 +96,8 @@ app.post("/api/auth/signup", async (req: any, res: any) => {
     // Create user
     const user = await prisma.user.create({
       data: {
-        username,
+        username: normalizedUsername,
+        email: normalizedEmail || undefined,
         password: hashedPassword,
         role: "MEMBER",
         balance: 0,
@@ -102,6 +118,7 @@ app.post("/api/auth/signup", async (req: any, res: any) => {
       user: {
         id: user.id,
         username: user.username,
+        email: user.email,
         role: user.role,
         balance: user.balance,
       },
@@ -115,16 +132,24 @@ app.post("/api/auth/signup", async (req: any, res: any) => {
 // ✅ LOGIN - User login
 app.post("/api/auth/login", async (req: any, res: any) => {
   try {
-    const { username, password } = req.body;
+    const { identifier, username, password } = req.body;
+    const loginIdentifier = String(identifier || username || "").trim();
 
     // Validate input
-    if (!username || !password) {
-      return res.status(400).json({ error: "Username and password required" });
+    if (!loginIdentifier || !password) {
+      return res
+        .status(400)
+        .json({ error: "Username/email and password required" });
     }
 
-    // Find user
-    const user = await prisma.user.findUnique({
-      where: { username },
+    // Find user by username or email
+    const user = await prisma.user.findFirst({
+      where: {
+        OR: [
+          { username: loginIdentifier },
+          { email: loginIdentifier.toLowerCase() },
+        ],
+      },
     });
 
     if (!user) {
@@ -155,6 +180,7 @@ app.post("/api/auth/login", async (req: any, res: any) => {
       user: {
         id: user.id,
         username: user.username,
+        email: user.email,
         role: user.role,
         balance: user.balance,
       },
@@ -192,6 +218,7 @@ app.get("/api/user/profile", verifyToken, async (req: any, res: any) => {
       select: {
         id: true,
         username: true,
+        email: true,
         role: true,
         balance: true,
         active: true,

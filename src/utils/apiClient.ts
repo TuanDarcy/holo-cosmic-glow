@@ -1,22 +1,27 @@
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
 
 export const apiClient = {
-  async login(email: string, password: string) {
+  async login(identifier: string, password: string) {
     const response = await fetch(`${API_URL}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username: email, password }),
+      body: JSON.stringify({ identifier, password }),
     });
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || "Login failed");
     return data;
   },
 
-  async signup(email: string, password: string, displayName: string) {
+  async signup(
+    username: string,
+    password: string,
+    displayName: string,
+    email?: string,
+  ) {
     const response = await fetch(`${API_URL}/auth/signup`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username: email, password, displayName }),
+      body: JSON.stringify({ username, password, displayName, email }),
     });
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || "Signup failed");

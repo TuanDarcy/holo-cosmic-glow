@@ -4,6 +4,7 @@ import { apiClient } from "@/utils/apiClient";
 interface User {
   id: string;
   username: string;
+  email?: string | null;
   role: string;
   balance: number;
 }
@@ -13,7 +14,12 @@ interface AuthContextType {
   token: string | null;
   isLoading: boolean;
   login: (username: string, password: string) => Promise<void>;
-  signup: (username: string, password: string, displayName: string) => Promise<void>;
+  signup: (
+    username: string,
+    password: string,
+    displayName: string,
+    email?: string,
+  ) => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
 }
@@ -30,7 +36,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const restoreAuth = async () => {
       const savedToken = localStorage.getItem("token");
       const savedUser = localStorage.getItem("user");
-      
+
       if (savedToken && savedUser) {
         try {
           // Verify token is still valid by fetching profile
@@ -47,7 +53,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
       setIsLoading(false);
     };
-    
+
     restoreAuth();
   }, []);
 
@@ -63,10 +69,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const signup = async (username: string, password: string, displayName: string) => {
+  const signup = async (
+    username: string,
+    password: string,
+    displayName: string,
+    email?: string,
+  ) => {
     setIsLoading(true);
     try {
-      const result = await apiClient.signup(username, password, displayName);
+      const result = await apiClient.signup(
+        username,
+        password,
+        displayName,
+        email,
+      );
       setToken(result.token);
       setUser(result.user);
       apiClient.setToken(result.token, result.user);

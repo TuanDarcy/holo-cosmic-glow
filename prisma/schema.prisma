@@ -14,6 +14,7 @@ generator client {
 model User {
   id        String   @id @default(auto()) @db.ObjectId @map("_id")
   username  String   @unique
+  email     String?
   password  String
   role      String   @default("MEMBER") // ADMIN, MEMBER, CTV
   balance   Float    @default(0)
