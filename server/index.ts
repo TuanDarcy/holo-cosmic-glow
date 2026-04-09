@@ -33,8 +33,15 @@ app.use(
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
+    preflightContinue: false,
+    maxAge: 86400,
   }),
 );
+
+// Preflight handler for specific routes
+app.options("/api/auth/signup", cors());
+app.options("/api/auth/login", cors());
+app.options("/api/user/profile", cors());
 
 app.use(express.json());
 

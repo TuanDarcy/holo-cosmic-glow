@@ -29,7 +29,9 @@ const Navbar = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 group shrink-0">
             <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center glow-cyan">
-              <span className="font-heading font-black text-primary-foreground text-sm">HS</span>
+              <span className="font-heading font-black text-primary-foreground text-sm">
+                HS
+              </span>
             </div>
             <span className="font-heading font-bold text-lg text-foreground group-hover:text-primary transition-colors hidden sm:inline">
               Holo<span className="text-primary">Shop</span>
@@ -65,17 +67,31 @@ const Navbar = () => {
               />
             </div>
 
-            <Link to="/deposit" className="glass-panel px-3 sm:px-4 py-1.5 rounded-full flex items-center gap-2 hover:border-primary/30 transition-colors">
-              <Wallet className="w-4 h-4 text-primary" />
-              <span className="text-sm font-semibold text-foreground">1,250,000₫</span>
-            </Link>
+            {isAuthenticated && user ? (
+              <Link
+                to="/deposit"
+                className="glass-panel px-3 sm:px-4 py-1.5 rounded-full flex items-center gap-2 hover:border-primary/30 transition-colors"
+              >
+                <Wallet className="w-4 h-4 text-primary" />
+                <span className="text-sm font-semibold text-foreground">
+                  {user.balance?.toLocaleString()}₫
+                </span>
+              </Link>
+            ) : null}
 
             <NotificationDropdown />
             <UserDropdown />
 
             {/* Mobile menu toggle */}
-            <button className="md:hidden p-2 rounded-xl hover:bg-muted/50 transition-colors" onClick={() => setMobileOpen(!mobileOpen)}>
-              {mobileOpen ? <X className="w-5 h-5 text-foreground" /> : <Menu className="w-5 h-5 text-foreground" />}
+            <button
+              className="md:hidden p-2 rounded-xl hover:bg-muted/50 transition-colors"
+              onClick={() => setMobileOpen(!mobileOpen)}
+            >
+              {mobileOpen ? (
+                <X className="w-5 h-5 text-foreground" />
+              ) : (
+                <Menu className="w-5 h-5 text-foreground" />
+              )}
             </button>
           </div>
         </div>
@@ -84,7 +100,10 @@ const Navbar = () => {
       {/* Mobile menu */}
       {mobileOpen && (
         <div className="fixed inset-0 z-40 pt-16 md:hidden">
-          <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" onClick={() => setMobileOpen(false)} />
+          <div
+            className="absolute inset-0 bg-background/80 backdrop-blur-sm"
+            onClick={() => setMobileOpen(false)}
+          />
           <div className="relative glass-panel border-b border-glass-border p-4 space-y-1">
             {/* Mobile search */}
             <div className="relative group mb-3">

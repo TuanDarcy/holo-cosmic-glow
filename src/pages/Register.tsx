@@ -5,7 +5,7 @@ import { Mail, Lock, Eye, EyeOff, User, Gamepad2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const Register = () => {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -22,7 +22,7 @@ const Register = () => {
     }
     setLoading(true);
     try {
-      await signup(email, password, displayName);
+      await signup(username, password, displayName);
       toast({ title: "Account created!", description: "Welcome to HoloShop!" });
       navigate("/");
     } catch (error: any) {
@@ -71,14 +71,14 @@ const Register = () => {
             </div>
 
             <div>
-              <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Email</label>
+              <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Username</label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="your@email.com"
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="username"
                   required
                   className="w-full pl-10 pr-4 py-3 rounded-xl bg-muted/30 border border-glass-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 focus:bg-muted/50 transition-all focus:shadow-[0_0_15px_hsl(186_100%_50%/0.15)]"
                 />
