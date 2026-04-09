@@ -20,44 +20,23 @@ const prisma = new PrismaClient();
 const authRoutes = express.Router();
 
 // Middleware
-const allowedOrigins = ["https://robuxfast.vercel.app", "https://vercel.app"];
-
 const corsOptions: cors.CorsOptions = {
-  origin(origin, callback) {
-    if (!origin) {
-      callback(null, true);
-      return;
-    }
-
-    const isAllowed =
-      allowedOrigins.includes(origin) ||
-      /^https:\/\/([a-z0-9-]+\.)*vercel\.app$/i.test(origin) ||
-      /^http:\/\/localhost:\d+$/i.test(origin);
-
-    if (isAllowed) {
-      callback(null, true);
-      return;
-    }
-
-    callback(new Error(`CORS blocked for origin: ${origin}`));
-  },
+  origin: "https://robuxfast.vercel.app",
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
-  preflightContinue: false,
-  optionsSuccessStatus: 204,
-  maxAge: 86400,
+  optionsSuccessStatus: 200,
 };
 
 app.use(cors(corsOptions));
 app.options(/.*/, cors(corsOptions));
 
+app.use(express.json());
+
 app.use((req, res, next) => {
-  console.log(`${req.method} ${req.url}`);
+  console.log("Request Method:", req.method, "URL:", req.url);
   next();
 });
-
-app.use(express.json());
 
 const JWT_SECRET = process.env.JWT_SECRET || "Trumblack2k7";
 const PORT = process.env.PORT || 3000;
