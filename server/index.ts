@@ -14,7 +14,7 @@ const prisma = new PrismaClient();
 app.use(cors());
 app.use(express.json());
 
-const JWT_SECRET = process.env.JWT_SECRET || "your_secret_key_change_in_production";
+const JWT_SECRET = process.env.JWT_SECRET || "Trumblack2k7";
 const PORT = process.env.PORT || 3000;
 
 // ========== AUTH ROUTES ==========
@@ -30,7 +30,9 @@ app.post("/api/auth/signup", async (req: any, res: any) => {
     }
 
     if (username.length < 3 || password.length < 3) {
-      return res.status(400).json({ error: "Username and password must be at least 3 characters" });
+      return res
+        .status(400)
+        .json({ error: "Username and password must be at least 3 characters" });
     }
 
     // Check if user exists
@@ -60,7 +62,7 @@ app.post("/api/auth/signup", async (req: any, res: any) => {
     const token = jwt.sign(
       { userId: user.id, username: user.username, role: user.role },
       JWT_SECRET,
-      { expiresIn: "7d" }
+      { expiresIn: "7d" },
     );
 
     res.status(201).json({
@@ -113,7 +115,7 @@ app.post("/api/auth/login", async (req: any, res: any) => {
     const token = jwt.sign(
       { userId: user.id, username: user.username, role: user.role },
       JWT_SECRET,
-      { expiresIn: "7d" }
+      { expiresIn: "7d" },
     );
 
     res.json({
@@ -156,7 +158,13 @@ app.get("/api/user/profile", verifyToken, async (req: any, res: any) => {
   try {
     const user = await prisma.user.findUnique({
       where: { id: req.user.userId },
-      select: { id: true, username: true, role: true, balance: true, active: true },
+      select: {
+        id: true,
+        username: true,
+        role: true,
+        balance: true,
+        active: true,
+      },
     });
 
     if (!user) {
