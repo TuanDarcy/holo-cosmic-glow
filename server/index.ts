@@ -32,8 +32,13 @@ app.use(
     },
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
   }),
 );
+
+// Explicit OPTIONS preflight handler
+app.options("*", cors());
+
 app.use(express.json());
 
 const JWT_SECRET = process.env.JWT_SECRET || "Trumblack2k7";

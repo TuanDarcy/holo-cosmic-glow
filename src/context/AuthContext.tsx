@@ -25,22 +25,30 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Load auth from localStorage on mount
+  // Load auth from localStorage on mount & verify token is still valid
   useEffect(() => {
-    const savedToken = localStorage.getItem("token");
-    const savedUser = localStorage.getItem("user");
-    
-    if (savedToken && savedUser) {
-      try {
-        setToken(savedToken);
-        setUser(JSON.parse(savedUser));
-      } catch (error) {
-        console.error("Failed to restore auth:", error);
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
+    const restoreAuth = async () => {
+      const savedToken = localStorage.getItem("token");
+      const savedUser = localStorage.getItem("user");
+      
+      if (savedToken && savedUser) {
+        try {
+          // Verify token is still valid by fetching profile
+          const profile = await apiClient.getProfile(savedToken);
+          setToken(savedToken);
+          setUser(profile);
+        } catch (error) {
+          console.error("Token verification failed:", error);
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          setToken(null);
+          setUser(null);
+        }
       }
-    }
-    setIsLoading(false);
+      setIsLoading(false);
+    };
+    
+    restoreAuth();
   }, []);
 
   const login = async (username: string, password: string) => {
