@@ -21,7 +21,7 @@ async function resetToRealData() {
     const admin = await prisma.user.create({
       data: {
         username: "tuandarcy",
-        email: "sharkblack2k7",
+        email: "sharkbalck2k7@gmail.com",
         password: hashedPassword,
         role: "ADMIN",
         active: true,
