@@ -21,27 +21,31 @@ const app = express();
 const prisma = new PrismaClient();
 const authRoutes = express.Router();
 
-// Middleware
-const allowedOrigins = ["https://robuxfast.vercel.app"];
+// ========== CORS CONFIGURATION ==========
+
+const ALLOWED_ORIGINS = [
+  "https://robuxfast.vercel.app",
+];
 
 const corsOptions: cors.CorsOptions = {
   origin(origin, callback) {
+    // Allow requests with no origin (e.g. server-to-server, curl, Postman)
     if (!origin) {
       callback(null, true);
       return;
     }
 
-    const isAllowed =
-      allowedOrigins.includes(origin) ||
-      /^https:\/\/([a-z0-9-]+\.)*vercel\.app$/i.test(origin) ||
-      /^http:\/\/localhost:\d+$/i.test(origin);
+    const isExplicitlyAllowed = ALLOWED_ORIGINS.includes(origin);
+    const isVercelApp = /^https:\/\/[a-z0-9-]+\.vercel\.app$/i.test(origin);
+    const isLocalhost = /^http:\/\/localhost:\d+$/i.test(origin);
 
-    if (isAllowed) {
+    if (isExplicitlyAllowed || isVercelApp || isLocalhost) {
       callback(null, true);
       return;
     }
 
-    callback(new Error(`CORS blocked for origin: ${origin}`));
+    console.warn(`[CORS] Blocked request from disallowed origin: ${origin}`);
+    callback(new Error(`CORS policy: origin '${origin}' is not allowed`));
   },
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
@@ -49,10 +53,25 @@ const corsOptions: cors.CorsOptions = {
   optionsSuccessStatus: 200,
 };
 
+// Apply CORS before everything else so preflight OPTIONS requests are
+// answered immediately, before the JSON body-parser or any route handler runs.
 app.use(cors(corsOptions));
-app.options(/.*/, cors(corsOptions));
+
+// Explicitly handle preflight for every route.
+app.options("*", cors(corsOptions));
 
 app.use(express.json());
+
+// CORS error handler — must come after cors() middleware so that errors
+// thrown by the origin callback are caught and returned as proper JSON
+// responses instead of crashing the request pipeline.
+app.use((err: any, req: any, res: any, next: any) => {
+  if (err && err.message && err.message.startsWith("CORS policy:")) {
+    console.error(`[CORS] Error: ${err.message}`);
+    return res.status(403).json({ error: err.message });
+  }
+  next(err);
+});
 
 app.use((req, res, next) => {
   console.log("Request Method:", req.method, "URL:", req.url);
