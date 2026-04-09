@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
 import NotificationDropdown from "./NotificationDropdown";
 import UserDropdown from "./UserDropdown";
+import { useAuth } from "@/context/AuthContext";
 
 const navLinks = [
   { label: "Trang chủ", path: "/" },
@@ -13,6 +14,12 @@ const navLinks = [
 const Navbar = () => {
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { isAuthenticated, user } = useAuth();
+
+  const visibleNavLinks = navLinks.filter((link) => {
+    if (link.path !== "/admin") return true;
+    return isAuthenticated && user?.role === "ADMIN";
+  });
 
   return (
     <>
@@ -31,7 +38,7 @@ const Navbar = () => {
 
           {/* Nav links - desktop */}
           <div className="hidden md:flex items-center gap-1">
-            {navLinks.map((link) => (
+            {visibleNavLinks.map((link) => (
               <Link
                 key={link.path}
                 to={link.path}
@@ -88,7 +95,7 @@ const Navbar = () => {
                 className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-muted/30 border border-glass-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/40 transition-all"
               />
             </div>
-            {navLinks.map((link) => (
+            {visibleNavLinks.map((link) => (
               <Link
                 key={link.path}
                 to={link.path}

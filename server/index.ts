@@ -11,7 +11,29 @@ const app = express();
 const prisma = new PrismaClient();
 
 // Middleware
-app.use(cors());
+const allowedOrigins = [
+  "https://robuxfast.vercel.app",
+  "http://localhost:8080",
+  "http://localhost:8081",
+  "http://localhost:8082",
+  "http://localhost:8083",
+  "http://localhost:8084",
+  "http://localhost:8085",
+];
+
+app.use(
+  cors({
+    origin(origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+        return;
+      }
+      callback(new Error("CORS blocked for this origin"));
+    },
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  }),
+);
 app.use(express.json());
 
 const JWT_SECRET = process.env.JWT_SECRET || "Trumblack2k7";
