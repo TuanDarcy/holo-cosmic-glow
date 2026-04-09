@@ -12,7 +12,9 @@ if (!process.env.DATABASE_URL && process.env.MONGODB_URI) {
 }
 
 if (!process.env.DATABASE_URL) {
-  console.warn("[startup] Missing DATABASE_URL/MONGODB_URI environment variable");
+  console.warn(
+    "[startup] Missing DATABASE_URL/MONGODB_URI environment variable",
+  );
 }
 
 const app = express();
@@ -20,8 +22,27 @@ const prisma = new PrismaClient();
 const authRoutes = express.Router();
 
 // Middleware
+const allowedOrigins = ["https://robuxfast.vercel.app"];
+
 const corsOptions: cors.CorsOptions = {
-  origin: "https://robuxfast.vercel.app",
+  origin(origin, callback) {
+    if (!origin) {
+      callback(null, true);
+      return;
+    }
+
+    const isAllowed =
+      allowedOrigins.includes(origin) ||
+      /^https:\/\/([a-z0-9-]+\.)*vercel\.app$/i.test(origin) ||
+      /^http:\/\/localhost:\d+$/i.test(origin);
+
+    if (isAllowed) {
+      callback(null, true);
+      return;
+    }
+
+    callback(new Error(`CORS blocked for origin: ${origin}`));
+  },
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
