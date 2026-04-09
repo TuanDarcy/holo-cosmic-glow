@@ -7,11 +7,20 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+if (!process.env.DATABASE_URL && process.env.MONGODB_URI) {
+  process.env.DATABASE_URL = process.env.MONGODB_URI;
+}
+
+if (!process.env.DATABASE_URL) {
+  console.warn("[startup] Missing DATABASE_URL/MONGODB_URI environment variable");
+}
+
 const app = express();
 const prisma = new PrismaClient();
+const authRoutes = express.Router();
 
 // Middleware
-const allowedOrigins = ["https://robuxfast.vercel.app"];
+const allowedOrigins = ["https://robuxfast.vercel.app", "https://vercel.app"];
 
 const corsOptions: cors.CorsOptions = {
   origin(origin, callback) {
@@ -41,7 +50,12 @@ const corsOptions: cors.CorsOptions = {
 };
 
 app.use(cors(corsOptions));
-app.options(/^\/api\/.*$/, cors(corsOptions));
+app.options(/.*/, cors(corsOptions));
+
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.url}`);
+  next();
+});
 
 app.use(express.json());
 
@@ -51,7 +65,7 @@ const PORT = process.env.PORT || 3000;
 // ========== AUTH ROUTES ==========
 
 // ✅ SIGNUP - Create new user
-app.post("/api/auth/signup", async (req: any, res: any) => {
+authRoutes.post("/signup", async (req: any, res: any) => {
   try {
     const { username, email, password } = req.body;
     const normalizedUsername = String(username || "").trim();
@@ -130,7 +144,7 @@ app.post("/api/auth/signup", async (req: any, res: any) => {
 });
 
 // ✅ LOGIN - User login
-app.post("/api/auth/login", async (req: any, res: any) => {
+authRoutes.post("/login", async (req: any, res: any) => {
   try {
     const { identifier, username, password } = req.body;
     const loginIdentifier = String(identifier || username || "").trim();
@@ -190,6 +204,8 @@ app.post("/api/auth/login", async (req: any, res: any) => {
     res.status(500).json({ error: "Server error" });
   }
 });
+
+app.use("/api/auth", authRoutes);
 
 // ========== PROTECTED ROUTES ==========
 
