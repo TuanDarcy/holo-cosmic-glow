@@ -36,9 +36,6 @@ app.use(
   }),
 );
 
-// Explicit OPTIONS preflight handler
-app.options("*", cors());
-
 app.use(express.json());
 
 const JWT_SECRET = process.env.JWT_SECRET || "Trumblack2k7";
